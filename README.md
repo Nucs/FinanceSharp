@@ -1,4 +1,12 @@
 # FinanceSharp
+
+Targets .NET 8 and .NET 10 on x64.
+
+[![Build and Release](https://github.com/Nucs/FinanceSharp/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/Nucs/FinanceSharp/actions/workflows/build-and-release.yml)
+[![Documentation](https://github.com/Nucs/FinanceSharp/actions/workflows/docs.yml/badge.svg)](https://github.com/Nucs/FinanceSharp/actions/workflows/docs.yml)
+
+[Documentation](https://nucs.github.io/FinanceSharp/) · [Contributing](https://github.com/Nucs/FinanceSharp/blob/master/CONTRIBUTING.md) · [Releases](https://github.com/Nucs/FinanceSharp/releases) · [Security](https://github.com/Nucs/FinanceSharp/blob/master/SECURITY.md)
+
 <p align="center">
   <img align="center" src="https://i.imgur.com/6601cb9.png" height=200  />
 </p> 
@@ -25,6 +33,16 @@ With all the abilities mentioned above, this makes FinanceSharp performance-read
 to execute a model and pass observation data to Python for machine-learning algorithm to work with or process.
 
 ## Getting Started
+The library targets .NET 8 and .NET 10 and produces x64 assemblies. For source builds, install the x64 versions of both SDKs and run these commands from the repository root:
+
+```sh
+dotnet restore tests/FinanceSharp.Tests/FinanceSharp.Tests.csproj
+dotnet test tests/FinanceSharp.Tests/FinanceSharp.Tests.csproj -c Release -f net8.0
+dotnet test tests/FinanceSharp.Tests/FinanceSharp.Tests.csproj -c Release -f net10.0
+```
+
+See the [contributor guide](https://github.com/Nucs/FinanceSharp/blob/master/CONTRIBUTING.md) for development and local documentation builds, and the [maintainer guide](https://github.com/Nucs/FinanceSharp/blob/master/MAINTAINING.md) for packaging, GitHub Pages, and releases. The solution also includes a Windows Forms example targeting .NET 8/10 for Windows.
+
 Have a look at [/examples](https://github.com/Nucs/FinanceSharp/blob/master/examples/FinanceSharp.Examples/Program.cs) directory for plotted examples.
 
 ## Architecture

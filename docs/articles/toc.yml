@@ -1,2 +1,4 @@
-- name: Introduction
+- name: Getting started
   href: intro.md
+- name: Working on the documentation
+  href: documentation.md

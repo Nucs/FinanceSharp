@@ -1,0 +1,102 @@
+/* FinanceSharp overrides for DocFX's modern template. */
+:root {
+  --bs-link-color: #1559ad;
+  --bs-link-color-rgb: 21, 89, 173;
+  --bs-link-hover-color: #103f7b;
+  --bs-link-hover-color-rgb: 16, 63, 123;
+}
+
+[data-bs-theme="dark"] {
+  --bs-link-color: #8fbeff;
+  --bs-link-color-rgb: 143, 190, 255;
+  --bs-link-hover-color: #c3dcff;
+  --bs-link-hover-color-rgb: 195, 220, 255;
+}
+
+#logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.fs-intro {
+  max-width: 54rem;
+  padding: 2.5rem 0 1.5rem;
+}
+
+.fs-kicker {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--bs-link-color);
+}
+
+.fs-intro h1 {
+  font-size: clamp(2.7rem, 6vw, 4.5rem);
+  font-weight: 750;
+  letter-spacing: -.04em;
+}
+
+.fs-lead {
+  max-width: 45rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--bs-secondary-color);
+}
+
+.fs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin: 1.5rem 0;
+}
+
+.fs-actions a {
+  padding: .65rem 1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .5rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.fs-actions .fs-primary {
+  background: #1559ad;
+  border-color: #1559ad;
+  color: #fff;
+}
+
+.fs-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.fs-card {
+  display: block;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .75rem;
+  padding: 1.3rem;
+  text-decoration: none;
+}
+
+.fs-card:hover {
+  border-color: var(--bs-link-color);
+}
+
+.fs-card strong {
+  display: block;
+  font-size: 1.08rem;
+  margin-bottom: .5rem;
+}
+
+.fs-card span {
+  color: var(--bs-secondary-color);
+  line-height: 1.55;
+}
+
+pre {
+  border-radius: .5rem;
+}

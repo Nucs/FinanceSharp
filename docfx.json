@@ -1,64 +1,68 @@
 {
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
   "metadata": [
     {
       "src": [
         {
-          "files": [
-            "src/**.csproj"
-          ]
+          "files": ["src/FinanceSharp/FinanceSharp.csproj"]
         }
       ],
       "dest": "docs/api",
+      "properties": {
+        "TargetFramework": "net10.0",
+        "Configuration": "Release",
+        "Platform": "x64",
+        "GeneratePackageOnBuild": "false"
+      },
+      "includePrivateMembers": false,
       "disableGitFeatures": false,
-      "disableDefaultFilter": false
+      "disableDefaultFilter": false,
+      "namespaceLayout": "flattened",
+      "memberLayout": "samePage",
+      "enumSortOrder": "declaringOrder",
+      "allowCompilationErrors": false
     }
   ],
   "build": {
     "content": [
       {
-        "files": [
-          "docs/api/**.yml",
-          "docs/api/index.md"
-        ]
-      },
-      {
-        "files": [
-          "docs/articles/**.md",
-          "docs/articles/**/toc.yml",
-          "docs/toc.yml",
-          "*.md"
-        ]
+        "src": "docs",
+        "files": ["index.md", "toc.yml", "articles/**/*.md", "articles/**/toc.yml", "api/**/*.yml", "api/index.md"]
       }
     ],
     "resource": [
       {
-        "files": [
-          "docs/images/**"
-        ]
+        "src": "docs",
+        "files": ["images/**"]
       }
     ],
     "overwrite": [
       {
-        "files": [
-          "docs/apidoc/**.md"
-        ],
-        "exclude": [
-          "obj/**",
-          "_site/**"
-        ]
+        "files": ["docs/api/overwrites/*.md"]
       }
     ],
-    "dest": "docs/_site",
-    "globalMetadataFiles": [],
-    "fileMetadataFiles": [],
-    "template": [
-      "default"
-    ],
-    "postProcessors": [],
-    "markdownEngineName": "markdig",
-    "noLangKeyword": false,
-    "keepFileLink": false,
-    "cleanupCacheHistory": false,
-    "disableGitFeatures": false
+    "output": "docs/_site",
+    "template": ["default", "modern", "docs/templates/financesharp"],
+    "globalMetadata": {
+      "_appName": "FinanceSharp",
+      "_appTitle": "FinanceSharp Documentation",
+      "_appLogoPath": "images/logo.png",
+      "_appFaviconPath": "images/logo.png",
+      "_appFooter": "<span>FinanceSharp &middot; <a href=\"https://github.com/Nucs/FinanceSharp\">Source on GitHub</a> &middot; Built with <a href=\"https://dotnet.github.io/docfx\">DocFX</a>.</span>",
+      "_enableSearch": true,
+      "_disableContribution": false,
+      "_disableNextArticle": false,
+      "_apiSpecFolder": "docs/api/overwrites",
+      "_lang": "en",
+      "_gitContribute": {
+        "repo": "https://github.com/Nucs/FinanceSharp",
+        "branch": "master"
+      }
+    },
+    "sitemap": {
+      "baseUrl": "https://nucs.github.io/FinanceSharp/"
+    },
+    "xrefService": ["https://xref.docs.microsoft.com/query?uid={uid}"],
+    "postProcessors": ["ExtractSearchIndex"]
   }
 }

@@ -1,8 +1,10 @@
-- name: Api Documentation
+- name: Guides
+  href: articles/
+  homepage: articles/intro.md
+- name: API reference
   href: api/
-  homepage: docs/api/index.md
-- name: Api Documentation
-  href: /
-  homepage: docs/api/index.md
-# - name: Articles
-#   href: articles/
+  homepage: api/index.md
+- name: Contributing
+  href: https://github.com/Nucs/FinanceSharp/blob/master/CONTRIBUTING.md
+- name: GitHub
+  href: https://github.com/Nucs/FinanceSharp
