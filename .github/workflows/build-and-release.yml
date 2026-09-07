@@ -1,0 +1,218 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [master, main]
+    tags: ['v*']
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  workflow-lint:
+    name: Validate workflows
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check all workflows with pinned actionlint
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/actionlint"
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz \
+            --output "$RUNNER_TEMP/actionlint/actionlint.tar.gz"
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint/actionlint.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/actionlint/actionlint.tar.gz" -C "$RUNNER_TEMP/actionlint"
+          "$RUNNER_TEMP/actionlint/actionlint" -color
+
+  test:
+    name: Test (${{ matrix.os }}, ${{ matrix.framework }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # The committed library currently emits x64 assemblies.
+        os: [ubuntu-24.04, windows-latest, macos-15-intel]
+        framework: [net8.0, net10.0]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Restore
+        run: dotnet restore tests/FinanceSharp.Tests/FinanceSharp.Tests.csproj
+      - name: Build
+        run: dotnet build tests/FinanceSharp.Tests/FinanceSharp.Tests.csproj -c Release -f ${{ matrix.framework }} --no-restore
+      - name: Test
+        run: dotnet test tests/FinanceSharp.Tests/FinanceSharp.Tests.csproj -c Release -f ${{ matrix.framework }} --no-build --logger trx --results-directory artifacts/test-results
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tests-${{ matrix.os }}-${{ matrix.framework }}
+          path: artifacts/test-results/*.trx
+          retention-days: 14
+
+  package:
+    name: Verify NuGet package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      curated-notes: ${{ steps.release-assets.outputs.curated }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Validate release tag
+        id: version
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: ./.github/scripts/Test-ReleaseTag.ps1 -Tag $env:RELEASE_TAG -DefaultBranch $env:DEFAULT_BRANCH
+      - name: Pack
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $packArgs = @('pack', 'src/FinanceSharp/FinanceSharp.csproj', '-c', 'Release', '--output', 'artifacts/nuget')
+          if ($env:RELEASE_VERSION) { $packArgs += "-p:Version=$env:RELEASE_VERSION" }
+          dotnet @packArgs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify package metadata and prepare release assets
+        id: release-assets
+        run: ./.github/scripts/Prepare-Release.ps1 -PackageDirectory artifacts/nuget
+      - name: Upload packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: nuget-packages
+          path: |
+            artifacts/nuget/*.nupkg
+            artifacts/nuget/*.snupkg
+            artifacts/nuget/SHA256SUMS
+            artifacts/nuget/RELEASE_NOTES.md
+          if-no-files-found: error
+          retention-days: 14
+
+  package-consumers:
+    name: Package consumer (${{ matrix.os }})
+    needs: package
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-15-intel]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: nuget-packages
+          path: artifacts/nuget
+      - name: Verify checksums and run installed package on both frameworks
+        run: ./.github/scripts/Test-Package.ps1 -PackageDirectory artifacts/nuget -RequireChecksums
+
+  examples:
+    name: Windows example (${{ matrix.framework }})
+    runs-on: windows-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net8.0-windows, net10.0-windows]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Build Windows Forms example
+        run: dotnet build examples/FinanceSharp.Examples/FinanceSharp.Examples.csproj -c Release -f ${{ matrix.framework }}
+
+  publish:
+    name: Publish release
+    needs: [workflow-lint, test, package, package-consumers, examples]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.repository == 'Nucs/FinanceSharp' && vars.ENABLE_NUGET_PUBLISH == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: nuget
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: nuget-packages
+          path: artifacts/nuget
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish NuGet package and symbols
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if (-not $env:NUGET_API_KEY) { throw 'Set NUGET_API_KEY in the nuget environment before releasing.' }
+          # nuget push sends the matching .snupkg alongside the .nupkg.
+          Get-ChildItem artifacts/nuget/*.nupkg | ForEach-Object {
+            dotnet nuget push $_.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+            if ($LASTEXITCODE -ne 0) { throw 'NuGet publishing failed.' }
+          }
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          IS_PRERELEASE: ${{ needs.package.outputs.prerelease }}
+          CURATED_NOTES: ${{ needs.package.outputs.curated-notes }}
+        run: |
+          $files = @(Get-ChildItem artifacts/nuget/* | Where-Object Extension -in '.nupkg', '.snupkg')
+          $assets = @($files.FullName) + 'artifacts/nuget/SHA256SUMS'
+          gh release view $env:RELEASE_TAG --repo $env:GH_REPO 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:RELEASE_TAG @assets --clobber
+          } else {
+            $releaseArgs = @('release', 'create', $env:RELEASE_TAG, '--verify-tag', '--title', "FinanceSharp $env:RELEASE_TAG", '--notes-file', 'artifacts/nuget/RELEASE_NOTES.md')
+            if ($env:CURATED_NOTES -ne 'true') { $releaseArgs += '--generate-notes' }
+            if ($env:IS_PRERELEASE -eq 'true') { $releaseArgs += '--prerelease' }
+            gh @releaseArgs @assets
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub release publishing failed.' }

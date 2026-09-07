@@ -1,0 +1,32 @@
+name: Feature or improvement
+description: Propose an indicator, API, documentation, or infrastructure improvement.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Describe what you are trying to do and what is currently missing.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Explain the desired behavior. A short C# caller example helps for API proposals.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: References and expected results
+      description: For numerical features, include a formula or reference implementation, sample input, expected output, and tolerance. For performance work, describe a reproducible measurement.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe existing approaches or workarounds and their limitations.
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and scope
+      description: Note expected API or behavioral changes, affected components, and related issues.

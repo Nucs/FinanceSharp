@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a crash, incorrect result, or other unexpected behavior.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues before filing a report. For a suspected security vulnerability, follow the [security policy](https://github.com/Nucs/FinanceSharp/blob/master/SECURITY.md) instead of posting details here. Use synthetic data and remove secrets from code and logs.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the problem and its effect on your use of FinanceSharp.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FinanceSharp version or commit
+      description: Include the package version or Git commit used to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include the operating system, CPU architecture, target framework, and relevant output from dotnet --info.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide C# code and a small input series, including indicator parameters and timestamps where relevant.
+      render: csharp
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: Include expected values, shapes, readiness state, and tolerance where relevant. Cite a formula or reference implementation and version if available.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include actual values or the complete exception and stack trace, with private information removed.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Include workarounds, related issues, or a suspected cause if known.

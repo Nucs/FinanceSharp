@@ -360,3 +360,7 @@ ignore/
 /**/bin/
 /**/obj/
 _site
+
+# CI, package validation, and local documentation tooling
+/artifacts/
+**/TestResults/

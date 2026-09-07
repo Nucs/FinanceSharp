@@ -1,0 +1,28 @@
+* text=auto
+
+*.cs text
+*.csproj text
+*.sln text
+*.md text
+*.json text
+*.props text
+*.targets text
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.psd binary
+*.dll binary
+*.pdb binary
+*.zip binary
+*.snk binary
+
+tests/FinanceSharp.Tests/TestData/** linguist-generated=true
+libs/** linguist-vendored=true

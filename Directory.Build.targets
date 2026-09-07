@@ -1,0 +1,16 @@
+<Project>
+  <!-- Packaging policy is imported after the project so the legacy package-on-build
+       settings cannot override it. Keep this scoped to the shipping library. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'FinanceSharp'">
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>finance;technical-analysis;indicators;quantitative-finance</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'FinanceSharp'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="/" Visible="false" />
+  </ItemGroup>
+</Project>
