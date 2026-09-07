@@ -19,8 +19,8 @@ using FinanceSharp.Indicators;
 using FinanceSharp;
 using System.Linq;
 using FinanceSharp.Tests.Data;
+using FinanceSharp.Tests.Helpers;
 using FluentAssertions;
-using Python.Runtime;
 
 namespace FinanceSharp.Tests.Indicators {
     [TestFixture]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using FinanceSharp;
 using ScottPlot;
@@ -23,13 +23,13 @@ namespace FinanceSharp.Examples {
 
             var props = data[0].Properties;
             if (props == BarValue.Properties || props == TradeBarValue.Properties) {
-                ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time)).ToArray();
+                ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time, TimeSpan.FromMinutes(1))).ToArray();
 
                 plt.PlotCandlestick(ohlcs);
-                plt.Ticks(dateTimeX: true);
+                plt.XAxis.DateTimeFormat(true);
             } else {
                 plt.PlotScatter(times.Select(t => t.ToOADate()).ToArray(), data.Select(d => d.Value).ToArray());
-                plt.Ticks(dateTimeX: true, rulerModeX: true);
+                plt.XAxis.DateTimeFormat(true); plt.XAxis.RulerMode(true);
             }
 
 
@@ -48,13 +48,13 @@ namespace FinanceSharp.Examples {
             foreach (var data in ys) {
                 var props = data[0].Properties;
                 if (props == BarValue.Properties || props == TradeBarValue.Properties) {
-                    ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time)).ToArray();
+                    ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time, TimeSpan.FromMinutes(1))).ToArray();
 
                     plt.PlotCandlestick(ohlcs);
-                    plt.Ticks(dateTimeX: true);
+                    plt.XAxis.DateTimeFormat(true);
                 } else {
                     plt.PlotScatter(times.Select(t => t.ToOADate()).ToArray(), data.Select(d => d.Value).ToArray());
-                    plt.Ticks(dateTimeX: true, rulerModeX: true);
+                    plt.XAxis.DateTimeFormat(true); plt.XAxis.RulerMode(true);
                 }
             }
 
@@ -72,13 +72,13 @@ namespace FinanceSharp.Examples {
 
             var props = data[0].Properties;
             if (props == BarValue.Properties || props == TradeBarValue.Properties) {
-                ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time)).ToArray();
+                ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time, 1d)).ToArray();
 
                 plt.PlotCandlestick(ohlcs);
-                plt.Ticks(dateTimeX: true);
+                plt.XAxis.DateTimeFormat(true);
             } else {
                 plt.PlotScatter(times, data.Select(d => d.Value).ToArray());
-                plt.Ticks(dateTimeX: timeIsOleAut, rulerModeX: true);
+                plt.XAxis.DateTimeFormat(timeIsOleAut); plt.XAxis.RulerMode(true);
             }
 
             form.Plot.Render();
@@ -95,14 +95,14 @@ namespace FinanceSharp.Examples {
             foreach (var data in ys) {
                 var props = data[0].Properties;
                 if (props == BarValue.Properties || props == TradeBarValue.Properties) {
-                    ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time)).ToArray();
+                    ScottPlot.OHLC[] ohlcs = data.Zip(times, (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time, 1d)).ToArray();
                     plt.PlotCandlestick(ohlcs);
 
-                    plt.Ticks(dateTimeX: true);
+                    plt.XAxis.DateTimeFormat(true);
                 } else {
                     plt.PlotScatter(times, data.Select(d => d.Value).ToArray());
 
-                    plt.Ticks(dateTimeX: timeIsOleAut, rulerModeX: true);
+                    plt.XAxis.DateTimeFormat(timeIsOleAut); plt.XAxis.RulerMode(true);
                 }
             }
 
@@ -123,10 +123,10 @@ namespace FinanceSharp.Examples {
             plt.XLabel("X");
 
             if (props == BarValue.Properties || props == TradeBarValue.Properties) {
-                ScottPlot.OHLC[] ohlcs = data.Zip(DataGen.Consecutive(data.Length), (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time)).ToArray();
+                ScottPlot.OHLC[] ohlcs = data.Zip(DataGen.Consecutive(data.Length), (d, time) => new OHLC(d.Open, d.High, d.Low, d.Close, time, 1d)).ToArray();
 
                 plt.PlotCandlestick(ohlcs);
-                plt.Ticks(dateTimeX: true);
+                plt.XAxis.DateTimeFormat(true);
             } else {
                 plt.PlotScatter(DataGen.Consecutive(data.Length), data.Select(d => d.Value).ToArray());
             }
@@ -147,7 +147,7 @@ namespace FinanceSharp.Examples {
             plt.XLabel("X");
 
             plt.PlotCandlestick(data);
-            plt.Ticks(dateTimeX: true);
+            plt.XAxis.DateTimeFormat(true);
 
             form.Plot.Render();
             form.ShowDialog();

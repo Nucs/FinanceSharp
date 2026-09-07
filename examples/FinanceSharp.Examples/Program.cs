@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using FinanceSharp;
 using FinanceSharp.Consolidators;
 using FinanceSharp.Examples.Data;
@@ -19,13 +20,14 @@ namespace FinanceSharp.Examples {
         static void Main(string[] args) {
             //load data
             (long Time, DoubleArray Value)[] ticks;
-            using (var zip = new ZipFile("./Data/BTCUSDT.2018-10-04.csv.zip"))
+            using (var zip = new Ionic.Zip.ZipFile("./Data/BTCUSDT.2018-10-04.csv.zip"))
             using (var zipfile = zip.Entries.First().OpenReader())
             using (var reader = new StreamReader(zipfile)) {
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) {
-                    csv.Configuration.PrepareHeaderForMatch = (string header, int index) =>
-                        char.ToUpperInvariant(header[0]) + header.Substring(1);
-                    csv.Configuration.MissingFieldFound = null;
+                var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
+                    PrepareHeaderForMatch = args => char.ToUpperInvariant(args.Header[0]) + args.Header.Substring(1),
+                    MissingFieldFound = null,
+                };
+                using (var csv = new CsvReader(reader, csvConfig)) {
                     ticks = csv.GetRecords<BinanceTick>()
                         .Select(tick => (
                             Time: (long) (tick.time * 1000d), //we add 3 zeros to turn it from seconds to milliseconds.

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using FinanceSharp.Tests.Helpers;
 
 namespace FinanceSharp.Tests.Data {
     public class DoubleArray2DManagedTests : DoubleArrayBaseTests {

@@ -1,0 +1,3 @@
+[submodule "refs/NumSharp"]
+	path = refs/NumSharp
+	url = https://github.com/SciSharp/NumSharp.git

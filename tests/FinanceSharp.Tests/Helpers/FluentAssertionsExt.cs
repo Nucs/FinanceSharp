@@ -1,10 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
+using FluentAssertions.Collections;
 using FluentAssertions.Execution;
 using FluentAssertions.Numeric;
 
 namespace FinanceSharp.Tests.Helpers {
     public static class FluentAssertionsExt {
+        /// <summary>
+        /// Restores the FluentAssertions v5 <c>BeEquivalentTo(params object[])</c> collection overload
+        /// (removed in v6+), delegating to the current order-independent collection equivalency check.
+        /// </summary>
+        public static AndConstraint<GenericCollectionAssertions<T>> BeEquivalentTo<T>(
+            this GenericCollectionAssertions<T> parent, params T[] expectation) {
+            return parent.BeEquivalentTo((IEnumerable<T>) expectation);
+        }
+
         /// <summary>
         /// Asserts a double value approximates another value as close as possible.
         /// </summary>
@@ -46,7 +57,7 @@ namespace FinanceSharp.Tests.Helpers {
             T actualDifference,
             string because,
             object[] becauseArgs)
-            where T : struct {
+            where T : struct, IComparable<T> {
             Execute.Assertion.ForCondition(differenceWithinPrecision).BecauseOf(because, becauseArgs).FailWith("Expected {context:value} to approximate {1} +/- {2}{reason}, but {0} differed by {3}.", (object) parent.Subject, (object) expectedValue, (object) precision, (object) actualDifference);
         }
     }

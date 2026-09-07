@@ -94,7 +94,7 @@ namespace FinanceSharp.Tests.Indicators {
             Assert.IsFalse(res);
         }
 
-        [Test, Ignore]
+        [Test, Ignore("Reflectively instantiates all indicators; left disabled from the original test suite.")]
         public void IndicatorMustBeEqualToItself() {
             var indicators = typeof(Indicator).Assembly.GetTypes()
                 .Where(t => typeof(IIndicator).IsAssignableFrom(t) && t.BaseType != null && t.BaseType.Name != "CandlestickPattern" && !t.Name.StartsWith("<"))

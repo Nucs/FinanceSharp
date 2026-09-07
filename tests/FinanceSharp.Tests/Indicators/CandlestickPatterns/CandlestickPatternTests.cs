@@ -23,11 +23,11 @@ using FinanceSharp.Indicators.CandlestickPatterns;
 namespace FinanceSharp.Tests.Indicators.CandlestickPatterns {
     [TestFixture]
     public class CandlestickPatternTests {
-        private readonly string[] _testFileNames = {
+        private static readonly string[] _testFileNames = {
             "spy_candle_patterns.txt", "ewz_candle_patterns.txt", "eurusd_candle_patterns.txt"
         };
 
-        public virtual TestCaseData[] PatternTestParameters {
+        public static TestCaseData[] PatternTestParameters {
             get {
                 var rows = new List<TestCaseData>();
 

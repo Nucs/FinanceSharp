@@ -22,9 +22,9 @@ using FinanceSharp;
 namespace FinanceSharp.Tests.Indicators {
     [TestFixture]
     public class DelayTests {
-        [Test, ExpectedException(typeof(ArgumentException), MatchType = MessageMatch.Contains, ExpectedMessage = "size of at least 1")]
+        [Test]
         public void DelayZeroThrowsArgumentException() {
-            new Delay(0);
+            Assert.That(() => new Delay(0), Throws.TypeOf<ArgumentException>().With.Message.Contains("size of at least 1"));
         }
 
         [Test]

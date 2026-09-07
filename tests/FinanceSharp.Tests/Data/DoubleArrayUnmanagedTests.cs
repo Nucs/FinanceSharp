@@ -24,13 +24,13 @@ namespace FinanceSharp.Tests.Data {
             }
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUp() {
             block = (double*) Marshal.AllocHGlobal(sizeof(double) * maxSize);
             offset = 0;
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TearDown() {
             Marshal.FreeHGlobal((IntPtr) block);
             offset = 0;

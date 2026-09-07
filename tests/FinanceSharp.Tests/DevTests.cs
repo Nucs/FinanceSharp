@@ -5,6 +5,7 @@ using FinanceSharp.Indicators;
 using FinanceSharp;
 using FluentAssertions;
 using NUnit.Framework;
+using FinanceSharp.Tests.Helpers;
 
 namespace FinanceSharp.Tests {
     public class DevTests {

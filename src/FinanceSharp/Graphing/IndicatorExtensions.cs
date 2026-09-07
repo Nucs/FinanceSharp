@@ -23,7 +23,6 @@ using System.Xml.Serialization;
 using FinanceSharp.Delegates;
 using FinanceSharp.Graphing;
 using FinanceSharp.Helpers;
-using MathNet.Numerics.Providers.LinearAlgebra.OpenBlas;
 using static FinanceSharp.Constants;
 
 

@@ -15,7 +15,6 @@
 
 using System;
 using NUnit.Framework;
-using Python.Runtime;
 using FinanceSharp;
 using FinanceSharp.Indicators;
 
